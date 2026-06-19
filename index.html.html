@@ -1,0 +1,1213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Taykeith Streets — Records Book</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+  :root {
+    --bg: #0d0d0f;
+    --surface: #141416;
+    --surface2: #1a1a1e;
+    --surface3: #222228;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.12);
+    --text: #f0f0f2;
+    --text2: #9090a0;
+    --text3: #5a5a6a;
+    --accent: #3b82f6;
+    --accent-dim: rgba(59,130,246,0.15);
+    --accent-border: rgba(59,130,246,0.35);
+    --green: #22c55e;
+    --green-dim: rgba(34,197,94,0.12);
+    --red: #ef4444;
+    --red-dim: rgba(239,68,68,0.12);
+    --amber: #f59e0b;
+    --amber-dim: rgba(245,158,11,0.12);
+    --radius: 10px;
+    --radius-sm: 6px;
+    --radius-lg: 14px;
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'Inter', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  /* ── Layout ── */
+  .shell {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    min-height: 100vh;
+  }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem 1rem;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 2rem;
+    padding: 0 0.25rem;
+  }
+
+  .brand-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-sm);
+    background: var(--accent-dim);
+    border: 1px solid var(--accent-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .brand-icon i { font-size: 18px; color: var(--accent); }
+
+  .brand-name { font-size: 13px; font-weight: 600; color: var(--text); }
+  .brand-sub { font-size: 11px; color: var(--text3); margin-top: 1px; }
+
+  .nav-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text3);
+    padding: 0 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 8px 10px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    color: var(--text2);
+    font-size: 13px;
+    font-weight: 500;
+    border: none;
+    background: transparent;
+    width: 100%;
+    text-align: left;
+    transition: all 0.12s;
+    margin-bottom: 2px;
+  }
+
+  .nav-item i { font-size: 16px; flex-shrink: 0; }
+
+  .nav-item:hover { background: var(--surface2); color: var(--text); }
+
+  .nav-item.active {
+    background: var(--accent-dim);
+    color: var(--accent);
+    border: 1px solid var(--accent-border);
+  }
+
+  .sidebar-footer {
+    margin-top: auto;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .sync-pill {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 11px;
+    color: var(--text2);
+    padding: 0 0.25rem;
+  }
+
+  .sync-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--text3);
+    flex-shrink: 0;
+  }
+
+  .sync-dot.ok { background: var(--green); box-shadow: 0 0 6px var(--green); }
+  .sync-dot.local { background: var(--amber); }
+
+  /* ── Main ── */
+  .main {
+    padding: 2rem;
+    max-width: 860px;
+  }
+
+  .page { display: none; }
+  .page.active { display: block; }
+
+  .page-header {
+    margin-bottom: 1.75rem;
+  }
+
+  .page-header h1 {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .page-header p {
+    font-size: 13px;
+    color: var(--text2);
+    margin-top: 3px;
+  }
+
+  /* ── Stats grid ── */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 1.75rem;
+  }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.1rem 1.25rem;
+  }
+
+  .stat-label {
+    font-size: 11px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 8px;
+  }
+
+  .stat-value {
+    font-size: 22px;
+    font-weight: 600;
+    font-family: var(--mono);
+    color: var(--text);
+  }
+
+  .stat-value.green { color: var(--green); }
+  .stat-value.red { color: var(--red); }
+
+  .stat-sub {
+    font-size: 11px;
+    color: var(--text3);
+    margin-top: 4px;
+  }
+
+  /* ── Card ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .card-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .card-title i { font-size: 16px; color: var(--text2); }
+
+  /* ── Form ── */
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-group.full { grid-column: 1 / -1; }
+
+  label { font-size: 11px; font-weight: 500; color: var(--text2); letter-spacing: 0.04em; }
+
+  input, select, textarea {
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 13px;
+    padding: 9px 12px;
+    width: 100%;
+    outline: none;
+    transition: border-color 0.15s;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--accent);
+  }
+
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath fill='%235a5a6a' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 30px;
+  }
+
+  option { background: var(--surface2); }
+
+  textarea { resize: vertical; min-height: 70px; }
+
+  .type-toggle {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+  }
+
+  .type-btn {
+    padding: 9px 0;
+    font-size: 13px;
+    font-weight: 500;
+    border: none;
+    background: var(--surface2);
+    color: var(--text2);
+    cursor: pointer;
+    transition: all 0.12s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .type-btn i { font-size: 15px; }
+
+  .type-btn.active-income {
+    background: var(--green-dim);
+    color: var(--green);
+    border: none;
+  }
+
+  .type-btn.active-expense {
+    background: var(--red-dim);
+    color: var(--red);
+    border: none;
+  }
+
+  .btn-row { display: flex; gap: 8px; justify-content: flex-end; }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 18px;
+    border-radius: var(--radius-sm);
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid var(--border2);
+    background: transparent;
+    color: var(--text2);
+    transition: all 0.12s;
+  }
+
+  .btn:hover { background: var(--surface2); color: var(--text); }
+
+  .btn-primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+
+  .btn-primary:hover { opacity: 0.88; background: var(--accent); color: #fff; }
+
+  .btn i { font-size: 15px; }
+
+  /* ── Table ── */
+  .table-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .filter-row { display: flex; gap: 8px; }
+
+  .filter-row select {
+    width: auto;
+    font-size: 12px;
+    padding: 7px 28px 7px 10px;
+  }
+
+  table { width: 100%; border-collapse: collapse; }
+
+  th {
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text3);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0 10px 10px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  td {
+    padding: 11px 10px;
+    font-size: 13px;
+    color: var(--text);
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--surface2); }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: 20px;
+    letter-spacing: 0.03em;
+  }
+
+  .badge-income { background: var(--green-dim); color: var(--green); }
+  .badge-expense { background: var(--red-dim); color: var(--red); }
+
+  .amount-cell {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  .amount-cell.income { color: var(--green); }
+  .amount-cell.expense { color: var(--red); }
+
+  .note-cell {
+    color: var(--text2);
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .del-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text3);
+    padding: 4px 6px;
+    border-radius: var(--radius-sm);
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    transition: all 0.12s;
+  }
+
+  .del-btn:hover { color: var(--red); background: var(--red-dim); }
+
+  .empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--text3);
+    font-size: 13px;
+  }
+
+  .empty-state i { font-size: 32px; display: block; margin-bottom: 8px; }
+
+  /* ── Code block ── */
+  .code-block {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    font-family: var(--mono);
+    font-size: 11.5px;
+    line-height: 1.75;
+    color: #a8d8a8;
+    overflow-x: auto;
+    white-space: pre;
+    margin-top: 0.75rem;
+    position: relative;
+  }
+
+  .copy-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: var(--surface3);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-sm);
+    color: var(--text2);
+    font-size: 11px;
+    font-family: var(--sans);
+    padding: 4px 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .copy-btn:hover { color: var(--text); }
+
+  .setup-step {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 1rem;
+    align-items: flex-start;
+  }
+
+  .step-num {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--accent-dim);
+    border: 1px solid var(--accent-border);
+    color: var(--accent);
+    font-size: 11px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .step-text { font-size: 13px; color: var(--text2); line-height: 1.6; }
+  .step-text strong { color: var(--text); font-weight: 500; }
+
+  /* ── Divider ── */
+  .divider { height: 1px; background: var(--border); margin: 1.25rem 0; }
+
+  /* ── Toast ── */
+  .toast {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius);
+    padding: 10px 16px;
+    font-size: 13px;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.5);
+    transform: translateY(20px);
+    opacity: 0;
+    transition: all 0.2s;
+    z-index: 999;
+    max-width: 300px;
+  }
+
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .toast.success i { color: var(--green); }
+  .toast.error i { color: var(--red); }
+  .toast.info i { color: var(--accent); }
+
+  /* ── Mobile ── */
+  @media (max-width: 700px) {
+    .shell { grid-template-columns: 1fr; }
+
+    .sidebar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: auto;
+      flex-direction: row;
+      align-items: center;
+      padding: 0.75rem 1rem;
+      border-right: none;
+      border-top: 1px solid var(--border);
+      z-index: 100;
+      justify-content: space-around;
+    }
+
+    .brand, .nav-label, .sidebar-footer { display: none; }
+
+    .nav-item {
+      flex-direction: column;
+      gap: 4px;
+      font-size: 10px;
+      padding: 6px 12px;
+      margin-bottom: 0;
+    }
+
+    .nav-item i { font-size: 20px; }
+
+    .main { padding: 1rem; padding-bottom: 90px; max-width: 100%; }
+
+    .stats-grid { grid-template-columns: 1fr 1fr; }
+    .form-grid { grid-template-columns: 1fr; }
+    .form-group.full { grid-column: 1; }
+  }
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-icon"><i class="ti ti-device-desktop"></i></div>
+      <div>
+        <div class="brand-name">Taykeith Streets</div>
+        <div class="brand-sub">Records Book</div>
+      </div>
+    </div>
+
+    <div class="nav-label">Menu</div>
+
+    <button class="nav-item active" onclick="showPage('log')" id="nav-log">
+      <i class="ti ti-edit"></i> Log entry
+    </button>
+    <button class="nav-item" onclick="showPage('records')" id="nav-records">
+      <i class="ti ti-list"></i> Records
+    </button>
+    <button class="nav-item" onclick="showPage('summary')" id="nav-summary">
+      <i class="ti ti-chart-bar"></i> Summary
+    </button>
+    <button class="nav-item" onclick="showPage('setup')" id="nav-setup">
+      <i class="ti ti-settings"></i> Setup
+    </button>
+
+    <div class="sidebar-footer">
+      <div class="sync-pill">
+        <div class="sync-dot local" id="sync-dot"></div>
+        <span id="sync-label">Not synced</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+
+    <!-- LOG PAGE -->
+    <div class="page active" id="page-log">
+      <div class="page-header">
+        <h1>Log entry</h1>
+        <p>Record a sale or expense for today</p>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Today's income</div>
+          <div class="stat-value green" id="today-income">KES 0</div>
+          <div class="stat-sub" id="today-income-count">0 entries</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Today's expenses</div>
+          <div class="stat-value red" id="today-expense">KES 0</div>
+          <div class="stat-sub" id="today-expense-count">0 entries</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Today's net</div>
+          <div class="stat-value" id="today-net">KES 0</div>
+          <div class="stat-sub" id="today-date"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><i class="ti ti-plus"></i> New entry</div>
+
+        <div class="form-group" style="margin-bottom:14px">
+          <label>Entry type</label>
+          <div class="type-toggle">
+            <button class="type-btn active-income" id="btn-income" onclick="setType('income')">
+              <i class="ti ti-arrow-up-circle"></i> Income
+            </button>
+            <button class="type-btn" id="btn-expense" onclick="setType('expense')">
+              <i class="ti ti-arrow-down-circle"></i> Expense
+            </button>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Amount (KES)</label>
+            <input type="number" id="entry-amount" placeholder="0.00" min="0" step="0.01">
+          </div>
+          <div class="form-group">
+            <label>Category</label>
+            <select id="entry-category">
+              <option value="">Select category</option>
+              <optgroup label="Services">
+                <option>Internet</option>
+                <option>Printing</option>
+                <option>Scanning</option>
+                <option>Photocopying</option>
+                <option>PS gaming</option>
+                <option>Typing</option>
+                <option>Lamination</option>
+              </optgroup>
+              <optgroup label="Expenses">
+                <option>Electricity</option>
+                <option>Rent</option>
+                <option>Airtime / data</option>
+                <option>Supplies</option>
+                <option>Salary</option>
+                <option>Maintenance</option>
+              </optgroup>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Date</label>
+            <input type="date" id="entry-date">
+          </div>
+          <div class="form-group">
+            <label>Logged by</label>
+            <input type="text" id="entry-by" placeholder="Staff name">
+          </div>
+          <div class="form-group full">
+            <label>Note (optional)</label>
+            <textarea id="entry-note" placeholder="e.g. customer paid for 2hrs internet + 3 pages printing"></textarea>
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn" onclick="clearForm()"><i class="ti ti-x"></i> Clear</button>
+          <button class="btn btn-primary" id="save-btn" onclick="saveEntry()">
+            <i class="ti ti-device-floppy"></i> Save entry
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RECORDS PAGE -->
+    <div class="page" id="page-records">
+      <div class="page-header">
+        <h1>Records</h1>
+        <p>All logged transactions</p>
+      </div>
+
+      <div class="card">
+        <div class="table-controls">
+          <div class="filter-row">
+            <select id="filter-type" onchange="renderTable()">
+              <option value="all">All types</option>
+              <option value="income">Income only</option>
+              <option value="expense">Expenses only</option>
+            </select>
+            <select id="filter-period" onchange="renderTable()">
+              <option value="all">All time</option>
+              <option value="today">Today</option>
+              <option value="week">This week</option>
+              <option value="month">This month</option>
+            </select>
+          </div>
+          <button class="btn" onclick="exportCSV()"><i class="ti ti-download"></i> Export CSV</button>
+        </div>
+
+        <div class="stats-grid" style="margin-bottom:1.25rem">
+          <div class="stat-card">
+            <div class="stat-label">Total income</div>
+            <div class="stat-value green" id="total-income">KES 0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Total expenses</div>
+            <div class="stat-value red" id="total-expense">KES 0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Net profit</div>
+            <div class="stat-value" id="total-net">KES 0</div>
+          </div>
+        </div>
+
+        <div style="overflow-x:auto">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Type</th>
+                <th>Category</th>
+                <th>Amount</th>
+                <th>By</th>
+                <th>Note</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="records-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUMMARY PAGE -->
+    <div class="page" id="page-summary">
+      <div class="page-header">
+        <h1>Summary</h1>
+        <p>Overview by period</p>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><i class="ti ti-calendar"></i> Period</div>
+        <div class="filter-row" style="margin-bottom:1.25rem">
+          <select id="summary-period" onchange="renderSummary()">
+            <option value="today">Today</option>
+            <option value="week">This week</option>
+            <option value="month" selected>This month</option>
+            <option value="all">All time</option>
+          </select>
+        </div>
+        <div class="stats-grid" style="margin-bottom:1.5rem">
+          <div class="stat-card">
+            <div class="stat-label">Income</div>
+            <div class="stat-value green" id="s-income">KES 0</div>
+            <div class="stat-sub" id="s-income-n">0 entries</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Expenses</div>
+            <div class="stat-value red" id="s-expense">KES 0</div>
+            <div class="stat-sub" id="s-expense-n">0 entries</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Net</div>
+            <div class="stat-value" id="s-net">KES 0</div>
+            <div class="stat-sub" id="s-margin">0% margin</div>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <div class="card-title" style="margin-bottom:0.75rem"><i class="ti ti-tag"></i> By category</div>
+        <div id="category-breakdown"></div>
+      </div>
+    </div>
+
+    <!-- SETUP PAGE -->
+    <div class="page" id="page-setup">
+      <div class="page-header">
+        <h1>Setup</h1>
+        <p>Connect to Google Sheets for cloud sync</p>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><i class="ti ti-table"></i> Google Sheets sync</div>
+
+        <div class="setup-step">
+          <div class="step-num">1</div>
+          <div class="step-text">Go to <strong>sheets.google.com</strong> and create a new spreadsheet. Name it <strong>TaykeithRecords</strong>.</div>
+        </div>
+        <div class="setup-step">
+          <div class="step-num">2</div>
+          <div class="step-text">Click <strong>Extensions → Apps Script</strong>. Delete everything in the editor.</div>
+        </div>
+        <div class="setup-step">
+          <div class="step-num">3</div>
+          <div class="step-text">Paste the script below and click <strong>Save (Ctrl+S)</strong>.</div>
+        </div>
+
+        <div style="position:relative">
+          <div class="code-block" id="gs-code">function doPost(e) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName("Records") || ss.getSheets()[0];
+
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow([
+      "Date", "Type", "Category",
+      "Amount (KES)", "Logged By", "Note", "Saved At"
+    ]);
+  }
+
+  var data = JSON.parse(e.postData.contents);
+
+  if (data.action === "add") {
+    sheet.appendRow([
+      data.date,
+      data.type,
+      data.category,
+      data.amount,
+      data.by,
+      data.note,
+      data.savedAt
+    ]);
+  }
+
+  return ContentService
+    .createTextOutput(JSON.stringify({ status: "ok" }))
+    .setMimeType(ContentService.MimeType.JSON);
+}</div>
+          <button class="copy-btn" onclick="copyScript()"><i class="ti ti-copy"></i> Copy</button>
+        </div>
+
+        <div class="setup-step" style="margin-top:1.25rem">
+          <div class="step-num">4</div>
+          <div class="step-text">Click <strong>Deploy → New deployment</strong>. Set type to <strong>Web app</strong>. Under "Who has access" choose <strong>Anyone</strong>. Click Deploy and copy the URL.</div>
+        </div>
+        <div class="setup-step">
+          <div class="step-num">5</div>
+          <div class="step-text">Paste the URL below and click Save. All future entries will sync to your Sheet automatically.</div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="form-group" style="margin-bottom:12px">
+          <label>Apps Script web app URL</label>
+          <input type="url" id="sheet-url" placeholder="https://script.google.com/macros/s/..." style="font-size:12px">
+        </div>
+
+        <div class="btn-row">
+          <button class="btn" onclick="testSync()"><i class="ti ti-wifi"></i> Test connection</button>
+          <button class="btn btn-primary" onclick="saveSheetUrl()"><i class="ti ti-check"></i> Save URL</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><i class="ti ti-database"></i> Local data</div>
+        <p style="font-size:13px;color:var(--text2);margin-bottom:1rem">All records are stored in this browser. Clearing browser data will erase them — make sure Google Sheets sync is set up.</p>
+        <div id="data-count" style="font-size:13px;color:var(--text2);margin-bottom:1rem"></div>
+        <div class="btn-row">
+          <button class="btn" onclick="exportCSV()"><i class="ti ti-download"></i> Export all as CSV</button>
+          <button class="btn" onclick="clearAllData()" style="color:var(--red);border-color:var(--red-dim)"><i class="ti ti-trash"></i> Clear all data</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">
+  <i class="ti ti-check" id="toast-icon"></i>
+  <span id="toast-msg">Saved</span>
+</div>
+
+<script>
+var entries = JSON.parse(localStorage.getItem('tk_entries_v2') || '[]');
+var sheetUrl = localStorage.getItem('tk_sheet_url') || '';
+var currentType = 'income';
+
+function init() {
+  var today = new Date().toISOString().split('T')[0];
+  document.getElementById('entry-date').value = today;
+  document.getElementById('today-date').textContent = formatDate(today);
+  if (sheetUrl) {
+    document.getElementById('sheet-url').value = sheetUrl;
+    setSyncStatus(true);
+  }
+  var saved = localStorage.getItem('tk_staff_name');
+  if (saved) document.getElementById('entry-by').value = saved;
+  updateTodayStats();
+  updateDataCount();
+}
+
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+  document.querySelectorAll('.nav-item').forEach(function(n) { n.classList.remove('active'); });
+  document.getElementById('page-' + name).classList.add('active');
+  document.getElementById('nav-' + name).classList.add('active');
+  if (name === 'records') renderTable();
+  if (name === 'summary') renderSummary();
+  if (name === 'setup') updateDataCount();
+}
+
+function setType(t) {
+  currentType = t;
+  document.getElementById('btn-income').className = 'type-btn' + (t === 'income' ? ' active-income' : '');
+  document.getElementById('btn-expense').className = 'type-btn' + (t === 'expense' ? ' active-expense' : '');
+  var cat = document.getElementById('entry-category');
+  cat.value = '';
+}
+
+function saveEntry() {
+  var amount = parseFloat(document.getElementById('entry-amount').value);
+  var category = document.getElementById('entry-category').value;
+  var date = document.getElementById('entry-date').value;
+  var note = document.getElementById('entry-note').value.trim();
+  var by = document.getElementById('entry-by').value.trim();
+
+  if (!amount || amount <= 0) { toast('Enter a valid amount', 'error'); return; }
+  if (!category) { toast('Select a category', 'error'); return; }
+  if (!date) { toast('Pick a date', 'error'); return; }
+
+  if (by) localStorage.setItem('tk_staff_name', by);
+
+  var entry = {
+    id: Date.now(),
+    type: currentType,
+    amount: amount,
+    category: category,
+    date: date,
+    note: note,
+    by: by || 'Staff',
+    savedAt: new Date().toISOString()
+  };
+
+  entries.push(entry);
+  localStorage.setItem('tk_entries_v2', JSON.stringify(entries));
+  updateTodayStats();
+
+  if (sheetUrl) syncToSheet(entry);
+
+  clearForm();
+  toast('Entry saved', 'success');
+}
+
+function syncToSheet(entry) {
+  fetch(sheetUrl, {
+    method: 'POST',
+    body: JSON.stringify({
+      action: 'add',
+      date: entry.date,
+      type: entry.type,
+      category: entry.category,
+      amount: entry.amount,
+      by: entry.by,
+      note: entry.note,
+      savedAt: entry.savedAt
+    })
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(d) { if (d.status === 'ok') setSyncStatus(true); })
+  .catch(function() {});
+}
+
+function setSyncStatus(ok) {
+  document.getElementById('sync-dot').className = 'sync-dot' + (ok ? ' ok' : ' local');
+  document.getElementById('sync-label').textContent = ok ? 'Synced to Sheet' : 'Not synced';
+}
+
+function saveSheetUrl() {
+  var url = document.getElementById('sheet-url').value.trim();
+  if (!url) { toast('Paste your Apps Script URL first', 'error'); return; }
+  sheetUrl = url;
+  localStorage.setItem('tk_sheet_url', url);
+  setSyncStatus(true);
+  toast('URL saved — entries will now sync to Google Sheets', 'success');
+}
+
+function testSync() {
+  if (!sheetUrl) { toast('No URL saved yet', 'error'); return; }
+  toast('Testing connection...', 'info');
+  fetch(sheetUrl, {
+    method: 'POST',
+    body: JSON.stringify({ action: 'ping' })
+  })
+  .then(function() { toast('Connection successful', 'success'); setSyncStatus(true); })
+  .catch(function() { toast('Could not reach the script — check your URL', 'error'); });
+}
+
+function clearForm() {
+  document.getElementById('entry-amount').value = '';
+  document.getElementById('entry-category').value = '';
+  document.getElementById('entry-note').value = '';
+  var today = new Date().toISOString().split('T')[0];
+  document.getElementById('entry-date').value = today;
+}
+
+function updateTodayStats() {
+  var today = new Date().toISOString().split('T')[0];
+  var inc = 0, exp = 0, ic = 0, ec = 0;
+  entries.forEach(function(e) {
+    if (e.date === today) {
+      if (e.type === 'income') { inc += e.amount; ic++; }
+      else { exp += e.amount; ec++; }
+    }
+  });
+  document.getElementById('today-income').textContent = fmtKES(inc);
+  document.getElementById('today-expense').textContent = fmtKES(exp);
+  document.getElementById('today-income-count').textContent = ic + ' entr' + (ic === 1 ? 'y' : 'ies');
+  document.getElementById('today-expense-count').textContent = ec + ' entr' + (ec === 1 ? 'y' : 'ies');
+  var net = inc - exp;
+  var el = document.getElementById('today-net');
+  el.textContent = (net < 0 ? '-' : '') + fmtKES(Math.abs(net));
+  el.className = 'stat-value' + (net >= 0 ? ' green' : ' red');
+}
+
+function filterEntries(typeF, periodF) {
+  var today = new Date().toISOString().split('T')[0];
+  var now = new Date();
+  return entries.filter(function(e) {
+    if (typeF && typeF !== 'all' && e.type !== typeF) return false;
+    if (periodF === 'today') return e.date === today;
+    if (periodF === 'week') { return (now - new Date(e.date)) / 86400000 <= 7; }
+    if (periodF === 'month') { return e.date.slice(0,7) === today.slice(0,7); }
+    return true;
+  });
+}
+
+function renderTable() {
+  var typeF = document.getElementById('filter-type').value;
+  var periodF = document.getElementById('filter-period').value;
+  var filtered = filterEntries(typeF, periodF);
+  filtered.sort(function(a, b) { return b.date.localeCompare(a.date) || b.id - a.id; });
+
+  var inc = 0, exp = 0;
+  filtered.forEach(function(e) { e.type === 'income' ? inc += e.amount : exp += e.amount; });
+  document.getElementById('total-income').textContent = fmtKES(inc);
+  document.getElementById('total-expense').textContent = fmtKES(exp);
+  var net = inc - exp;
+  var netEl = document.getElementById('total-net');
+  netEl.textContent = (net < 0 ? '-' : '') + fmtKES(Math.abs(net));
+  netEl.className = 'stat-value' + (net >= 0 ? ' green' : ' red');
+
+  var tbody = document.getElementById('records-body');
+  if (!filtered.length) {
+    tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><i class="ti ti-file-off"></i>No records found</div></td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = filtered.map(function(e) {
+    var badge = e.type === 'income'
+      ? '<span class="badge badge-income"><i class="ti ti-arrow-up" style="font-size:10px"></i> income</span>'
+      : '<span class="badge badge-expense"><i class="ti ti-arrow-down" style="font-size:10px"></i> expense</span>';
+    return '<tr>' +
+      '<td>' + formatDate(e.date) + '</td>' +
+      '<td>' + badge + '</td>' +
+      '<td>' + (e.category || '—') + '</td>' +
+      '<td class="amount-cell ' + e.type + '">' + (e.type==='income'?'+':'-') + ' ' + fmtKES(e.amount) + '</td>' +
+      '<td style="color:var(--text2)">' + (e.by || '—') + '</td>' +
+      '<td class="note-cell">' + (e.note || '—') + '</td>' +
+      '<td><button class="del-btn" onclick="deleteEntry(' + e.id + ')" aria-label="Delete"><i class="ti ti-trash"></i></button></td>' +
+    '</tr>';
+  }).join('');
+}
+
+function renderSummary() {
+  var periodF = document.getElementById('summary-period').value;
+  var filtered = filterEntries('all', periodF);
+  var inc = 0, exp = 0, ic = 0, ec = 0;
+  var cats = {};
+  filtered.forEach(function(e) {
+    if (e.type === 'income') { inc += e.amount; ic++; }
+    else { exp += e.amount; ec++; }
+    var k = e.category + '|' + e.type;
+    cats[k] = (cats[k] || 0) + e.amount;
+  });
+  document.getElementById('s-income').textContent = fmtKES(inc);
+  document.getElementById('s-expense').textContent = fmtKES(exp);
+  document.getElementById('s-income-n').textContent = ic + ' entries';
+  document.getElementById('s-expense-n').textContent = ec + ' entries';
+  var net = inc - exp;
+  var netEl = document.getElementById('s-net');
+  netEl.textContent = (net < 0 ? '-' : '') + fmtKES(Math.abs(net));
+  netEl.className = 'stat-value' + (net >= 0 ? ' green' : ' red');
+  var margin = inc > 0 ? Math.round((net / inc) * 100) : 0;
+  document.getElementById('s-margin').textContent = margin + '% margin';
+
+  var breakdown = document.getElementById('category-breakdown');
+  var keys = Object.keys(cats).sort(function(a,b) { return cats[b]-cats[a]; });
+  if (!keys.length) { breakdown.innerHTML = '<p style="color:var(--text3);font-size:13px">No data yet.</p>'; return; }
+  var maxVal = Math.max.apply(null, keys.map(function(k){return cats[k];}));
+  breakdown.innerHTML = keys.map(function(k) {
+    var parts = k.split('|');
+    var cat = parts[0]; var type = parts[1];
+    var pct = Math.round((cats[k] / maxVal) * 100);
+    var color = type === 'income' ? 'var(--green)' : 'var(--red)';
+    return '<div style="margin-bottom:10px">' +
+      '<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">' +
+        '<span style="color:var(--text2)">' + cat + ' <span style="font-size:10px;opacity:0.6">(' + type + ')</span></span>' +
+        '<span style="font-family:var(--mono);font-size:12px;color:var(--text)">' + fmtKES(cats[k]) + '</span>' +
+      '</div>' +
+      '<div style="height:4px;background:var(--surface3);border-radius:2px">' +
+        '<div style="height:4px;width:' + pct + '%;background:' + color + ';border-radius:2px;transition:width 0.3s"></div>' +
+      '</div></div>';
+  }).join('');
+}
+
+function deleteEntry(id) {
+  if (!confirm('Delete this entry? This cannot be undone.')) return;
+  entries = entries.filter(function(e) { return e.id !== id; });
+  localStorage.setItem('tk_entries_v2', JSON.stringify(entries));
+  updateTodayStats();
+  renderTable();
+  toast('Entry deleted', 'info');
+}
+
+function exportCSV() {
+  if (!entries.length) { toast('No records to export', 'error'); return; }
+  var headers = ['Date','Type','Category','Amount (KES)','Logged By','Note','Saved At'];
+  var rows = entries.map(function(e) {
+    return [e.date, e.type, e.category, e.amount, e.by||'', e.note||'', e.savedAt].map(function(v) {
+      return '"' + String(v).replace(/"/g,'""') + '"';
+    }).join(',');
+  });
+  var csv = [headers.join(',')].concat(rows).join('\n');
+  var blob = new Blob([csv], { type: 'text/csv' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = 'taykeith-records-' + new Date().toISOString().split('T')[0] + '.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('CSV downloaded', 'success');
+}
+
+function copyScript() {
+  var code = document.getElementById('gs-code').textContent;
+  navigator.clipboard.writeText(code).then(function() { toast('Script copied', 'success'); });
+}
+
+function clearAllData() {
+  if (!confirm('Clear ALL records from this device? This cannot be undone. Make sure you have a Google Sheets backup first.')) return;
+  entries = [];
+  localStorage.removeItem('tk_entries_v2');
+  updateTodayStats();
+  updateDataCount();
+  toast('All local data cleared', 'info');
+}
+
+function updateDataCount() {
+  document.getElementById('data-count').textContent = entries.length + ' record' + (entries.length === 1 ? '' : 's') + ' stored locally';
+}
+
+function fmtKES(n) {
+  return 'KES ' + Math.round(n).toLocaleString('en-KE');
+}
+
+function formatDate(d) {
+  var parts = d.split('-');
+  var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return parseInt(parts[2]) + ' ' + months[parseInt(parts[1])-1] + ' ' + parts[0];
+}
+
+var toastTimer;
+function toast(msg, type) {
+  var el = document.getElementById('toast');
+  var icon = document.getElementById('toast-icon');
+  var icons = { success: 'ti-check', error: 'ti-x', info: 'ti-info-circle' };
+  icon.className = 'ti ' + (icons[type] || 'ti-check');
+  document.getElementById('toast-msg').textContent = msg;
+  el.className = 'toast ' + type + ' show';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function() { el.classList.remove('show'); }, 2800);
+}
+
+init();
+</script>
+</body>
+</html>
